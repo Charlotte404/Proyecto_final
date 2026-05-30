@@ -1,0 +1,52 @@
+---
+config:
+  layout: fixed
+---
+flowchart TB
+ subgraph Alimentacio["Alimentació i Masses"]
+        USB["Línia USB VBUS (5V @ 2A)"]
+        REG["Regulador LDO 3.3V"]
+        GND["Massa (GND)"]
+  end
+ subgraph Entrades["Entrades"]
+        BOTO["Polsador"]
+  end
+ subgraph Sensors["Sensors"]
+        TOF["Sensor ToF VL53L1X"]
+  end
+ subgraph Actuadors["Actuadors"]
+        SERVO["Servomotor MG90S"]
+  end
+ subgraph Connectivitat["Connectivitat"]
+        WIFI["Antena Wi-Fi Integrada"]
+        WEB["Navegador Web (PC/Smartphone)"]
+  end
+    USB -- 5 V --> ESP32{{"ESP32-S3 DevKitC-1"}}
+    ESP32 -- 5 V --> REG
+    REG -- "3.3 V (Vermell)" --> TOF & SERVO
+    ESP32 -- GND --> GND
+    GND -- GND (Negre) --> TOF
+    GND -- GND (Marró) --> SERVO
+    GND -- GND (Groc) --> BOTO
+    ESP32 -. GPIO 5 (Groc) .-> SERVO
+    ESP32 -. "GPIO 9 / SDA Pull-up (Verd)" .-> TOF
+    ESP32 -. "GPIO 8 / SCL Pull-up (Blau)" .-> TOF
+    ESP32 -. GPIO 4 (Groc) .-> BOTO
+    ESP32 -. Connexió Interna RF .-> WIFI
+    WIFI -. Protocol WebSockets / HTTP .-> WEB
+
+     USB:::power
+     REG:::power
+     GND:::power
+     BOTO:::input
+     TOF:::sensor
+     SERVO:::actuator
+     WIFI:::net
+     WEB:::net
+     ESP32:::mcu
+    classDef mcu fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
+    classDef sensor fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+    classDef power fill:#f39c12,stroke:#d35400,stroke-width:2px,color:#fff
+    classDef actuator fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+    classDef net fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+    classDef input fill:#f1c40f,stroke:#f39c12,stroke-width:2px,color:#fff
