@@ -1,4 +1,4 @@
-# V.2 del projecte
+# V.3 del projecte
 
 ---
 
